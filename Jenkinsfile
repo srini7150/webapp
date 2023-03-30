@@ -26,19 +26,16 @@ pipeline {
                 sh 'echo $DOCKERHUB_CREDENTIALS_PSW | docker login -u $DOCKERHUB_CREDENTIALS_USR --password-stdin'
             }
         }
-        stage ('building docker image') {
+        stage ('building & tagging docker image') {
             steps {
-                sh 'echo building docker image....'
+                sh 'docker build -t srinu7150/webapp:$BUILD_NUMBER .'
+                sh 'docker tag srinu7150/webapp:$BUILD_NUMBER srinu7150/webapp:latest'
             }
         }
-        stage ('tagging docker image') {
+        stage ('pushing to docker hub') {
             steps {
-                sh 'echo tagging docker image....'
-            }
-        }
-        stage ('push') {
-            steps {
-                sh 'echo pushing docker image to docker hub...'
+                sh 'docker push srinu7150/webapp:$BUILD_NUMBER'
+                sh 'docker push srinu7150/webapp:latest'
             }
         }
     }
