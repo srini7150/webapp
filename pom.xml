@@ -4,7 +4,7 @@
 
   <groupId>com.devops.demo</groupId>
   <artifactId>webapp</artifactId>
-  <version>23.5.0</version>
+  <version>23.6.0</version>
   <packaging>war</packaging>
 
   <name>webapp</name>
