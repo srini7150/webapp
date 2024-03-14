@@ -14,13 +14,18 @@ pipeline {
                 sh 'java --version'
             }
         }
-        stage ("build & SonarQube analysis") {
+        stage ('package') {
             steps {
-                withSonarQubeEnv('sonarqube') {
-                    sh 'mvn clean package sonar:sonar'
-                }
+                sh "mvn clean package"
             }
         }
+        // stage ("build & SonarQube analysis") {
+        //     steps {
+        //         withSonarQubeEnv('sonarqube') {
+        //             sh 'mvn clean package sonar:sonar'
+        //         }
+        //     }
+        // }
         // stage("Quality Gate") {
         //     steps {
         //         timeout(time: 2, unit: 'MINUTES') {
