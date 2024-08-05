@@ -5,6 +5,9 @@ pipeline {
     }
     environment {     
         DOCKERHUB_CREDENTIALS = credentials('docker-hub')
+        SONARQUBE_URL = 'https://localhost:9000'
+        SONAR_PROJECT_NAME = 'webapp'
+        SONAR_PROJECT_KEY = 'webapp'
     }
     stages {
         stage ('environment test') {
@@ -14,18 +17,16 @@ pipeline {
                 sh 'java --version'
             }
         }
-        stage ('package') {
+        stage ("build & SonarQube analysis") {
             steps {
-                sh "mvn clean package"
+                withSonarQubeEnv('sonarqube') {
+                    sh "mvn clean package sonar:sonar \
+                    -Dsonar.host.url=${SONARQUBE_URL} \
+                    -Dsonar.projectKey=${SONAR_PROJECT_KEY} \
+                    -Dsonar.projectName=${SONAR_PROJECT_NAME}"
+                }
             }
         }
-        // stage ("build & SonarQube analysis") {
-        //     steps {
-        //         withSonarQubeEnv('sonarqube') {
-        //             sh 'mvn clean package sonar:sonar'
-        //         }
-        //     }
-        // }
         // stage("Quality Gate") {
         //     steps {
         //         timeout(time: 2, unit: 'MINUTES') {
