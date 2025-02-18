@@ -1,54 +1,25 @@
 pipeline {
     agent any
-    tools {
-        maven '3.9.1'
-    }
-    environment {     
-        DOCKERHUB_CREDENTIALS = credentials('docker-hub')
-    }
     stages {
-        stage ('environment test') {
+        stage ('checkout') {
             steps {
-                sh 'docker version'
-                sh 'mvn --version'
-                sh 'java --version'
+                echo "cloneing git repository"
             }
         }
-        stage ("build & SonarQube analysis") {
+        stage ('build') {
             steps {
-                withSonarQubeEnv('sonarqube') {
-                    sh 'mvn clean package sonar:sonar'
-                }
+                echo "performing maven build"
             }
         }
-        // stage("Quality Gate") {
-        //     steps {
-        //         timeout(time: 2, unit: 'MINUTES') {
-        //             waitForQualityGate abortPipeline: true
-        //         }
-        //     }
-        // }
-        stage ('docker login') {
+        stage ('sonar-scan') {
             steps {
-                sh 'echo $DOCKERHUB_CREDENTIALS_PSW | docker login -u $DOCKERHUB_CREDENTIALS_USR --password-stdin'
+                echo "performing sonar scan"
             }
         }
-        stage ('building & tagging docker image') {
+        stage ('publish') {
             steps {
-                sh 'docker build -t srinu7150/webapp:$BUILD_NUMBER .'
-                sh 'docker tag srinu7150/webapp:$BUILD_NUMBER srinu7150/webapp:latest'
+                echo "publish to jfrog"
             }
-        }
-        stage ('pushing to docker hub') {
-            steps {
-                sh 'docker push srinu7150/webapp:$BUILD_NUMBER'
-                sh 'docker push srinu7150/webapp:latest'
-            }
-        }
-    }
-    post{
-        always {  
-            sh 'docker logout'
         }
     }
 }
