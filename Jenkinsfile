@@ -4,7 +4,7 @@ pipeline {
         maven '3.9.1'
     }
     environment {     
-        SONAR-TOKEN = credentials('sonar-token')
+        SONAR_TOKEN = credentials('sonar-token')
         MVN_SETTINGS = 'pipeline/settings.xml'
     }
     stages {
@@ -29,7 +29,7 @@ pipeline {
                         -Dsonar.projectKey=webapp \
                         -Dsonar.host.url=http://192.168.1.6:9000 \
                         -Dsonar.settings=sonar-project.properites \
-                        -Dsonar.login=${SONAR-TOKEN}
+                        -Dsonar.login=${SONAR_TOKEN}
                     """
                 }
             }
