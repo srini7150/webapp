@@ -1,14 +1,9 @@
 pipeline {
     agent any
     stages {
-        stage ('checkout') {
-            steps {
-                echo "cloneing git repository"
-            }
-        }
         stage ('build') {
             steps {
-                echo "performing maven build"
+                sh"mvn11 clean compile"
             }
         }
         stage ('sonar-scan') {
