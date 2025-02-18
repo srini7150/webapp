@@ -16,10 +16,14 @@ pipeline {
             }
         }
         stage ('build') {
-            sh "mvn -s ${MVN_SETTINGS} clean compile"
+            steps {
+                sh "mvn -s ${MVN_SETTINGS} clean compile"
+            }
         }
         stage ('test') {
-            sh "mvn -s ${MVN_SETTINGS} test -Dmaven.install.skip=true -Dmaven.deploy.skip=true"
+            steps {
+                sh "mvn -s ${MVN_SETTINGS} test -Dmaven.install.skip=true -Dmaven.deploy.skip=true"
+            }
         }
         stage ("build & SonarQube analysis") {
             steps {
