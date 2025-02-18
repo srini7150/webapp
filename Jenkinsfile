@@ -4,7 +4,8 @@ pipeline {
         maven '3.9.1'
     }
     environment {     
-        DOCKERHUB_CREDENTIALS = credentials('docker-hub')
+        SONAR-TOKEN = credentials('sonar-token')
+        MVN_SETTINGS = 'pipeline/settings.xml'
     }
     stages {
         stage ('environment test') {
@@ -14,41 +15,44 @@ pipeline {
                 sh 'java --version'
             }
         }
+        stage ('build') {
+            sh "mvn -s ${MVN_SETTINGS} clean compile"
+        }
+        stage ('test') {
+            sh "mvn -s ${MVN_SETTINGS} test -Dmaven.install.skip=true -Dmaven.deploy.skip=true"
+        }
         stage ("build & SonarQube analysis") {
             steps {
                 withSonarQubeEnv('sonarqube') {
-                    sh 'mvn clean package sonar:sonar'
+                    sh """
+                        mvn -s ${MVN_SETTINGS} sonar:sonar
+                        -Dsonar.projectKey=webapp \
+                        -Dsonar.host.url=http://192.168.1.6:9000 \
+                        -Dsonar.settings=sonar-project.properites \
+                        -Dsonar.login=${SONAR-TOKEN}
+                    """
                 }
             }
         }
-        // stage("Quality Gate") {
-        //     steps {
-        //         timeout(time: 2, unit: 'MINUTES') {
-        //             waitForQualityGate abortPipeline: true
-        //         }
-        //     }
-        // }
-        stage ('docker login') {
+        stage("Quality Gate") {
             steps {
-                sh 'echo $DOCKERHUB_CREDENTIALS_PSW | docker login -u $DOCKERHUB_CREDENTIALS_USR --password-stdin'
+                timeout(time: 2, unit: 'MINUTES') {
+                    waitForQualityGate abortPipeline: true
+                }
             }
         }
-        stage ('building & tagging docker image') {
+        stage ('publish') {
             steps {
-                sh 'docker build -t srinu7150/webapp:$BUILD_NUMBER .'
-                sh 'docker tag srinu7150/webapp:$BUILD_NUMBER srinu7150/webapp:latest'
+                sh """
+                    mvn -s ${MVN_SETTINGS} deploy -Dmaven.test.skip=true -Dsonar.skip=true -Dinstall.skip=true
+                """
             }
         }
-        stage ('pushing to docker hub') {
-            steps {
-                sh 'docker push srinu7150/webapp:$BUILD_NUMBER'
-                sh 'docker push srinu7150/webapp:latest'
-            }
-        }
+
     }
     post{
         always {  
-            sh 'docker logout'
+            sh 'Pipeline is finished'
         }
     }
 }
