@@ -8,6 +8,11 @@ pipeline {
         PATH = "$PATH:$JAVA_HOME/bin"
         MVN_SETTINGS = "pipeline/settings.xml"
     }
+
+    options {
+        ansiColor('xterm')
+    }
+
     stages {
         stage ('build') {
             steps {
