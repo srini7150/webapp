@@ -33,6 +33,19 @@
     </dependency>
   </dependencies>
 
+<distributionManagement>
+    <snapshotRepository>
+        <id>snapshots</id>
+        <name>snapshots</name>
+        <url>http://192.168.1.6:8081/artifactory/libs-snapshot-local</url>
+    </snapshotRepository>
+    <repository>
+        <id>central</id>
+        <name>releases</name>
+        <url>http://192.168.1.6:8081/artifactory/libs-release-local</url>
+    </repository>
+</distributionManagement>
+
   <build>
     <plugins>
       <plugin>
@@ -47,7 +60,7 @@
       <plugin>
         <groupId>org.sonarsource.scanner.maven</groupId>
         <artifactId>sonar-maven-plugin</artifactId>
-        <version>3.7.0.1746</version>
+        <version>5.0.0.4389</version>
       </plugin>
     </plugins>
   </build>
