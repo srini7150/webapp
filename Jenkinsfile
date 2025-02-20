@@ -25,7 +25,7 @@ pipeline {
             steps {
                 sh """
                     mvn -s ${MVN_SETTINGS} sonar:sonar \
-                    -Dsonar.projectKey=maven-modular \
+                    -Dsonar.projectKey=webapp \
                     -Dsonar.settings=sonar-project.properites \
                     -Dsonar.host.url=http://192.168.1.6:9000 \
                     -Dsonar.login=${SONAR_TOKEN}
