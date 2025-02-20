@@ -4,6 +4,10 @@ pipeline {
         label 'laptop'
     }
 
+parameters {
+  booleanParam (name: 'SonarScan', defaultValue: true, description: 'To run sonar scan in pipeline')
+}
+
     options {
         ansiColor('xterm')
     }
@@ -22,6 +26,11 @@ pipeline {
             }
         }
         stage ('sonar-scan') {
+            when {
+                expression {
+                    "${params.SonarScan}"
+                }
+            }
             steps {
                 sh """
                     mvn -s ${MVN_SETTINGS} sonar:sonar \
