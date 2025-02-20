@@ -22,16 +22,32 @@ pipeline {
         }
         stage ('sonar-scan') {
             steps {
-                sh"""
-                    mvn -s ${MVN_SETTINGS} sonar:sonar \
-                    -Dsonar.projectKey=webapp \
-                    -Dsonar.host.url=http://192.168.1.6:9000 \
-                    -Dsonar.settings=sonar-project.properites \
-                    -Dsonar.login=${SONAR_TOKEN}
-                
-                """
+                script {
+                    withSonarQubeEnv(credentialsId: 'sonar-token') {
+                        sh """
+                            mvn -s ${MVN_SETTINGS} sonar:sonar \
+                            -Dsonar.projectKey=webapp \
+                            -Dsonar.host.url=http://192.168.1.6:9000 \
+                            -Dsonar.settings=sonar-project.properites \
+                        """
+                        waitForQualityGate abortPipeline: false, credentialsId: 'sonar-token'
+                    }
+                }
             }
         }
+
+        // stage('Quality Gate') {
+        //     steps {
+        //         script {
+        //             timeout(time: 5, unit: 'MINUTES') {
+        //                 waitForQualityGate abortPipeline: true
+        //             }
+        //         }
+        //     }
+        // }
+
+
+
         stage ('publish') {
             steps {
                 echo "publish to jfrog"
