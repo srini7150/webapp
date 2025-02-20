@@ -28,7 +28,7 @@ parameters {
         stage ('sonar-scan') {
             when {
                 expression {
-                    "${params.SonarScan}"
+                    params.SonarScan == true
                 }
             }
             steps {
