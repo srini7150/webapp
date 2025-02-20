@@ -12,6 +12,7 @@ pipeline {
         JAVA_HOME = "/usr/lib/jvm/java-11-openjdk-amd64"
         PATH = "$PATH:$JAVA_HOME/bin"
         MVN_SETTINGS = "pipeline/settings.xml"
+        SONAR_TOKEN = credentials('sonar-token')
     }
 
     stages {
@@ -22,7 +23,13 @@ pipeline {
         }
         stage ('sonar-scan') {
             steps {
-                echo "performing sonar scan"
+                sh """
+                    mvn -s ${MVN_SETTINGS} sonar:sonar \                                                                                                                                                                                                 ─╯
+                    -Dsonar.projectKey=maven-modular \
+                    -Dsonar.settings=sonar-project.properites \
+                    -Dsonar.host.url=http://192.168.1.6:9000 \
+                    -Dsonar.login=${SONAR_TOKEN}
+                """
             }
         }
         stage ('publish') {
