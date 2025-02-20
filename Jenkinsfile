@@ -25,6 +25,13 @@ parameters {
                 sh"mvn -s ${MVN_SETTINGS} clean compile"
             }
         }
+
+        stage ('tests') {
+            steps {
+                sh "mvn -s ${MVN_SETTINGS} test"
+            }
+        }
+
         stage ('sonar-scan') {
             when {
                 expression {
@@ -43,7 +50,7 @@ parameters {
         }
         stage ('publish') {
             steps {
-                echo "publish to jfrog"
+                sh"mvn -s ${MVN_SETTINGS} deploy -DskipTests=true -Dmaven.install.skip=true"
             }
         }
     }
