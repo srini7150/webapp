@@ -17,9 +17,31 @@ parameters {
         PATH = "$PATH:$JAVA_HOME/bin"
         MVN_SETTINGS = "pipeline/settings.xml"
         SONAR_TOKEN = credentials('sonar-token')
+        VERSION = ""
     }
 
     stages {
+
+        stage ('versioning') {
+            steps {
+                script {
+
+                    VERSION = readFile('pipeline/versions/version.counter').trim()
+
+                    if ( "${BRANCH_NAME}" == "release" ) {
+                        VERSION = "${VERSION}-${BUILD_NUMBER}"
+                    } 
+                    else if ( "${BRANCH_NAME}" == "develop" ) {
+                        VERSION = "${VERSION}-SNAPSHOT"
+                    }
+                    else {
+                        VERSION = "1.0.0-SNAPSHOT"
+                    }
+                    sh "mvn -s ${MVN_SETTINGS} versions:set -DnewVersion=${VERSION}"
+                }
+            }
+        }
+
         stage ('build') {
             steps {
                 sh"mvn -s ${MVN_SETTINGS} clean compile"
@@ -48,11 +70,17 @@ parameters {
             }
         }
 
-        stage("Quality Gate") {
-            steps {
-                timeout(time: 1, unit: 'MINUTES') {
-                    waitForQualityGate abortPipeline: true, credentialsId: 'sonar-token'
+        stage ('tag') {
+            when {
+                expression {
+                    "${BRANCH_NAME}" == "release"
                 }
+            }
+            steps {
+                sh """
+                    git tag ${VERSION}
+                    git push origin tag ${VERSION}
+                """
             }
         }
 
