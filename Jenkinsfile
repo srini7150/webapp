@@ -17,6 +17,7 @@ parameters {
         PATH = "$PATH:$JAVA_HOME/bin"
         MVN_SETTINGS = "pipeline/settings.xml"
         SONAR_TOKEN = credentials('sonar-token')
+        GIT_CREDS = credentials('github-credentials')
         VERSION = ""
     }
 
@@ -78,8 +79,10 @@ parameters {
             }
             steps {
                 sh """
+                    git config --global user.name=${GIT_CREDS_USR}
+                    git config --global user.email=srinivasdevops7150@gmail.com
                     git tag ${VERSION}
-                    git push origin tag ${VERSION}
+                    git push https://${GIT_CREDS_USR}:${GIT_CREDS_PSW}github.com/srini7150/webapp.git tag ${VERSION}
                 """
             }
         }
