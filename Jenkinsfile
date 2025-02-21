@@ -37,7 +37,7 @@ parameters {
                     else {
                         VERSION = "1.0.0-SNAPSHOT"
                     }
-                    mvn versions:set -DnewVersion="${VERSION}"
+                    sh "mvn -s ${MVN_SETTINGS} versions:set -DnewVersion=${VERSION}"
                 }
             }
         }
