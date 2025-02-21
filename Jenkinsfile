@@ -26,7 +26,7 @@ parameters {
             steps {
                 script {
 
-                    VERSION = readfile('pipeline/versions/version.counter').trim()
+                    VERSION = readFile('pipeline/versions/version.counter').trim()
 
                     if ( "${BRANCH_NAME}" == "release" ) {
                         VERSION = "${VERSION}-${BUILD_NUMBER}"
