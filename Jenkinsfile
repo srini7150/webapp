@@ -28,16 +28,25 @@ parameters {
                 script {
 
                     VERSION = readFile('pipeline/versions/version.counter').trim()
+                    def versionElements = currentVersion.split("\\.")
 
-                    if ( "${BRANCH_NAME}" == "release" ) {
-                        VERSION = "${VERSION}-${BUILD_NUMBER}"
-                    } 
+                    if( "${BRANCH_NAME}" == "release" ) {
+                        versionElements[versionElements.length - 1] = (versionElements[versionElements.length - 1] as Integer) + 1
+                    }
+                    VERSION = versionElements.join(".")
+                    echo "incremented version is ${VERSION}"
+
                     else if ( "${BRANCH_NAME}" == "develop" ) {
                         VERSION = "${VERSION}-SNAPSHOT"
                     }
-                    else {
-                        VERSION = "1.0.0-SNAPSHOT"
+                    else if ( "${BRANCH_NAME}" =~ /^feature/ ) {
+                        def VERSION_NAME = "sh $(echo ${BRANCH_NAME} | sed 's~^feature/~~')"
+                        VERSION = "${VERSION_NAME}-SNAPSHOT"
                     }
+                    else {
+                        VERSION = "${VERSION}"
+                    }
+
                     sh "mvn -s ${MVN_SETTINGS} versions:set -DnewVersion=${VERSION}"
                 }
             }
