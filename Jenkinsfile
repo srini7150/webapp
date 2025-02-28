@@ -27,7 +27,7 @@ parameters {
             steps {
                 script {
 
-                    VERSION = readFile('pipeline/versions/version.counter').trim()
+                    def currentVersion = readFile('pipeline/versions/version.counter').trim()
                     def versionElements = currentVersion.split("\\.")
 
                     if( "${BRANCH_NAME}" == "release" ) {
