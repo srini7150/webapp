@@ -36,7 +36,7 @@ parameters {
                     VERSION = versionElements.join(".")
                     echo "incremented version is ${VERSION}"
 
-                    else if ( "${BRANCH_NAME}" == "develop" ) {
+                    if ( "${BRANCH_NAME}" == "develop" ) {
                         VERSION = "${VERSION}-SNAPSHOT"
                     }
                     else if ( "${BRANCH_NAME}" =~ /^feature/ ) {
