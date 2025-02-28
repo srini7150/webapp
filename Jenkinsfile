@@ -40,7 +40,7 @@ parameters {
                         VERSION = "${VERSION}-SNAPSHOT"
                     }
                     else if ( "${BRANCH_NAME}" =~ /^feature/ ) {
-                        def VERSION_NAME = "sh $(echo ${BRANCH_NAME} | sed 's~^feature/~~')"
+                        def VERSION_NAME = sh(script: "echo ${BRANCH_NAME} | sed 's~^feature/~~'", returnStdout: true).trim()
                         VERSION = "${VERSION_NAME}-SNAPSHOT"
                     }
                     else {
