@@ -47,6 +47,8 @@ parameters {
                         VERSION = "${VERSION}"
                     }
 
+                    echo "VERSION for ${BRANCH_NAME} is: ${VERSION}"
+
                     sh "mvn -s ${MVN_SETTINGS} versions:set -DnewVersion=${VERSION}"
                 }
             }
