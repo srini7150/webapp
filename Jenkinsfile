@@ -101,5 +101,26 @@ parameters {
                 sh"mvn -s ${MVN_SETTINGS} deploy -DskipTests=true -Dmaven.install.skip=true"
             }
         }
+
+        stage ('version-increment') {
+            when {
+                expression {
+                    "${BRANCH_NAME}" == "release"
+                }
+            }
+            steps {
+                script {
+                    sh "echo ${VERSION} > pipeline/versions/version.counter"
+                    sh """
+                        git config --global user.name=srini7150
+                        git config --global user.email=srinivasdevops7150@gmail.com
+
+                        git add pipeline/versions/version.counter
+                        git commit -m "updated version from jenkins as ${VERSION}"
+                        git push https://${GIT_CREDS_USR}:${GIT_CREDS_PSW}@github.com/srini7150/webapp.git
+                    """
+                }
+            }
+        }
     }
 }
