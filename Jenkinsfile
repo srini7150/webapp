@@ -10,6 +10,7 @@ parameters {
 
     options {
         ansiColor('xterm')
+        skipDefaultCheckout()
     }
     
     environment {
@@ -23,10 +24,18 @@ parameters {
 
     stages {
 
+        stage ('checkout') {
+            steps {
+                script {
+                    deleteDir()
+                    checkout scm
+                }
+            }
+        }
+
         stage ('versioning') {
             steps {
                 script {
-
                     def currentVersion = readFile('pipeline/versions/version.counter').trim()
                     def versionElements = currentVersion.split("\\.")
 
@@ -112,12 +121,12 @@ parameters {
                 script {
                     sh "echo ${VERSION} > pipeline/versions/version.counter"
                     sh """
-                        git config --global user.name=srini7150
-                        git config --global user.email=srinivasdevops7150@gmail.com
-
+                        git config --global user.name = "srini7150"
+                        git config --global user.email = "srinivasdevops7150@gmail.com"
+                        git checkout release
                         git add pipeline/versions/version.counter
                         git commit -m "updated version from jenkins as ${VERSION}"
-                        git push https://${GIT_CREDS_USR}:${GIT_CREDS_PSW}@github.com/srini7150/webapp.git
+                        git push https://${GIT_CREDS_USR}:${GIT_CREDS_PSW}@github.com/srini7150/webapp.git ${BRANCH_NAME}
                     """
                 }
             }
