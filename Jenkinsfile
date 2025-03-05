@@ -9,7 +9,6 @@ pipeline {
     options {
         ansiColor('xterm')
         skipDefaultCheckout()
-        buildDiscarder logRotator(numToKeepStr: '5')
     }
     
     environment {
@@ -127,7 +126,7 @@ pipeline {
                         echo ${VERSION} > pipeline/versions/version.counter
                         git add pipeline/versions/version.counter
                         git commit -m "updated version from jenkins as ${VERSION}"
-                        git push origin ${BRANCH_NAME}
+                        git push https://${GIT_CREDS_USR}:${GIT_CREDS_PSW}@github.com/srini7150/webapp.git ${BRANCH_NAME}
                     """
                 }
             }
