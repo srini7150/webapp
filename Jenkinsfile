@@ -1,16 +1,15 @@
 pipeline {
 
-    agent {
-        label 'laptop'
-    }
+    agent any
 
-parameters {
-  booleanParam (name: 'SonarScan', defaultValue: true, description: 'To run sonar scan in pipeline')
-}
+    parameters {
+        booleanParam (name: 'SonarScan', defaultValue: true, description: 'To run sonar scan in pipeline')
+    }
 
     options {
         ansiColor('xterm')
         skipDefaultCheckout()
+        buildDiscarder logRotator(numToKeepStr: '5')
     }
     
     environment {
@@ -128,7 +127,7 @@ parameters {
                         echo ${VERSION} > pipeline/versions/version.counter
                         git add pipeline/versions/version.counter
                         git commit -m "updated version from jenkins as ${VERSION}"
-                        git push https://${GIT_CREDS_USR}:${GIT_CREDS_PSW}@github.com/srini7150/webapp.git ${BRANCH_NAME}
+                        git push origin ${BRANCH_NAME}
                     """
                 }
             }
