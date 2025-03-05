@@ -1,8 +1,5 @@
 pipeline {
     agent any
-    tools {
-        maven '3.9.1'
-    }
     environment {     
         SONAR_TOKEN = credentials('sonar-token')
         MVN_SETTINGS = 'pipeline/settings.xml'
@@ -10,7 +7,6 @@ pipeline {
     stages {
         stage ('environment test') {
             steps {
-                sh 'docker version'
                 sh 'mvn --version'
                 sh 'java --version'
             }
