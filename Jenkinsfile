@@ -133,4 +133,15 @@ pipeline {
             }
         }
     }
+    post {
+        success {
+            echo "pipeline is finished successfully"
+        }
+        unstable {
+            echo "pipeline is unstable"
+        }
+        failure {
+            echo "pipeline failed"
+        }
+    }
 }
