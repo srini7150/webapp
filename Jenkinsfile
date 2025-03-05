@@ -119,11 +119,13 @@ parameters {
             }
             steps {
                 script {
-                    sh "echo ${VERSION} > pipeline/versions/version.counter"
                     sh """
+                        git config --global --unset-all user.name
+                        git config --global --unset-all user.email
                         git config --global user.name "srini7150"
                         git config --global user.email "srinivasdevops7150@gmail.com"
                         git checkout release
+                        echo ${VERSION} > pipeline/versions/version.counter
                         git add pipeline/versions/version.counter
                         git commit -m "updated version from jenkins as ${VERSION}"
                         git push origin ${BRANCH_NAME}
