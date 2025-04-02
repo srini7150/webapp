@@ -84,7 +84,7 @@ pipeline {
                 withSonarQubeEnv('sonarqube') {
                 sh "mvn -s ${MVN_SETTINGS} sonar:sonar \
                     -Dsonar.projectKey=webapp \
-                    -Dsonar.host.url=http://192.168.1.6:9000 \
+                    -Dsonar.host.url=http://127.0.0.1:9000 \
                     -Dsonar.login=${SONAR_TOKEN}"
                 }
             }
