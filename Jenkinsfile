@@ -130,11 +130,11 @@ pipeline {
                     """
                 }
             }
-        }
-        post {
-            always {
-                script {
-                    sh "docker logout"
+            post {
+                always {
+                    script {
+                        sh "docker logout"
+                    }
                 }
             }
         }
