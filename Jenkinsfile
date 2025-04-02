@@ -18,6 +18,7 @@ pipeline {
         MVN_SETTINGS = "pipeline/settings.xml"
         SONAR_TOKEN = credentials('sonar-token')
         GIT_CREDS = credentials('github-credentials')
+        DOCKER_CREDS = credentials('docker-hub-creds')
         VERSION = ""
     }
 
@@ -107,6 +108,34 @@ pipeline {
         stage ('publish') {
             steps {
                 sh"mvn -s ${MVN_SETTINGS} deploy -DskipTests=true -Dmaven.install.skip=true"
+            }
+        }
+
+        stage ('Docker build') {
+            steps {
+                script {
+                    sh """
+                        docker build -t srinu7150/mywebapp:${VERSION} .
+                    """
+                }
+            }
+        }
+
+        stage ('Docker push') {
+            steps {
+                script {
+                    sh """
+                        docker login -u ${DOCKER_CREDS_USR} -p ${DOCKER_CREDS_PSW}
+                        docker push srinu7150/mywebapp:${VERSION}
+                    """
+                }
+            }
+        }
+        post {
+            always {
+                script {
+                    sh "docker logout"
+                }
             }
         }
 
