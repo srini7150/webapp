@@ -34,6 +34,11 @@ pipeline {
         }
 
         stage ('versioning') {
+            agent {
+                docker {
+                    image 'maven:3.9.9-sapmachine-11'
+                }
+            }
             steps {
                 script {
                     def currentVersion = readFile('pipeline/versions/version.counter').trim()
@@ -64,18 +69,33 @@ pipeline {
         }
 
         stage ('build') {
+            agent {
+                docker {
+                    image 'maven:3.9.9-sapmachine-11'
+                }
+            }
             steps {
                 sh"mvn -s ${MVN_SETTINGS} clean compile"
             }
         }
 
         stage ('tests') {
+            agent {
+                docker {
+                    image 'maven:3.9.9-sapmachine-11'
+                }
+            }
             steps {
                 sh "mvn -s ${MVN_SETTINGS} test"
             }
         }
 
         stage ('sonar-scan') {
+            agent {
+                docker {
+                    image 'maven:3.9.9-sapmachine-11'
+                }
+            }
             when {
                 expression {
                     params.SonarScan == true
